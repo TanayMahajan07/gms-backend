@@ -12,7 +12,7 @@ import com.gms.gmsmvp.repository.RoleRepository;
 import com.gms.gmsmvp.repository.UserRepository;
 import com.gms.gmsmvp.security.GmsUserDetails;
 import com.gms.gmsmvp.security.SecurityUtils;
-import com.gms.gmsmvp.shared.DuplicateResourceException;
+import com.gms.gmsmvp.exception.DuplicateResourceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

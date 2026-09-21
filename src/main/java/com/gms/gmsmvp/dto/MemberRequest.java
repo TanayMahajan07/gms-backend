@@ -7,21 +7,20 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberRequest {
 
-    @Size(max = 50)
-    private String memberCode;
+//    @Size(max = 50)
+//    private String memberCode;
 
-    private Long gymId;
+//    private Long gymId;
 
     @NotBlank
     @Size(max = 100)
@@ -71,4 +70,5 @@ public class MemberRequest {
     private Long createdBy;
 
     private Long updatedBy;
+    // test 
 }

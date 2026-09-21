@@ -1,6 +1,6 @@
-package com.gms.gmsmvp.shared;
+package com.gms.gmsmvp.exception;
 
-import com.gms.gmsmvp.exception.ResourceNotFoundException;
+import com.gms.gmsmvp.response.ApiErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

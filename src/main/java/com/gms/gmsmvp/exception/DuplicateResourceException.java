@@ -1,4 +1,4 @@
-package com.gms.gmsmvp.shared;
+package com.gms.gmsmvp.exception;
 
 public class DuplicateResourceException extends RuntimeException {
 

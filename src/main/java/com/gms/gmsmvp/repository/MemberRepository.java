@@ -11,9 +11,11 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    boolean existsByMemberCode(String memberCode);
+    boolean existsByMemberCodeAndGymId(String memberCode , Long gymId);
 
-    Optional<Member> findByMemberCode(String memberCode);
+    Optional<Member> findByMemberCodeAndGymId(String memberCode , Long gymId);
+
+    Optional<Member> findByIdAndGymId(Long id, Long gymId);
 
     @Query("""
             select m from Member m

@@ -1,4 +1,4 @@
-package com.gms.gmsmvp.shared;
+package com.gms.gmsmvp.response;
 
 import java.time.LocalDateTime;
 import java.util.Map;

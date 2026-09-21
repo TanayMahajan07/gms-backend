@@ -14,7 +14,7 @@ import com.gms.gmsmvp.repository.MembershipRepository;
 import com.gms.gmsmvp.repository.MembershipStatusRepository;
 import com.gms.gmsmvp.security.GmsUserDetails;
 import com.gms.gmsmvp.security.SecurityUtils;
-import com.gms.gmsmvp.shared.DuplicateResourceException;
+import com.gms.gmsmvp.exception.DuplicateResourceException;
 import com.gms.gmsmvp.util.MembershipDateCalculator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
