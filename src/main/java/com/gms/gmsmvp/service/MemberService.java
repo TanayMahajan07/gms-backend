@@ -4,6 +4,8 @@ import com.gms.gmsmvp.dto.MemberRequest;
 import com.gms.gmsmvp.dto.MemberResponse;
 import com.gms.gmsmvp.entity.Member;
 import com.gms.gmsmvp.repository.MemberRepository;
+import com.gms.gmsmvp.security.GmsUserDetails;
+import com.gms.gmsmvp.security.SecurityUtils;
 import com.gms.gmsmvp.shared.DuplicateResourceException;
 import com.gms.gmsmvp.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -31,12 +33,17 @@ public class MemberService {
             throw new DuplicateResourceException("Member code already exists: " + memberCode);
         }
 
+        GmsUserDetails currentUser = SecurityUtils.requireCurrentUser();
+
         Member member = new Member();
         member.setMemberCode(memberCode);
         apply(member, request);
+        if (currentUser.getGymId() != null) {
+            member.setGymId(currentUser.getGymId());
+        }
         member.setActive(request.getActive() == null || request.getActive());
-        member.setCreatedBy(request.getCreatedBy());
-        member.setUpdatedBy(request.getUpdatedBy());
+        member.setCreatedBy(currentUser.getId());
+        member.setUpdatedBy(currentUser.getId());
 
         return MemberResponse.from(memberRepository.save(member));
     }
@@ -44,7 +51,12 @@ public class MemberService {
     @Transactional(readOnly = true)
     public Page<MemberResponse> search(String search, Long gymId, Boolean active, Pageable pageable) {
         String normalizedSearch = StringUtils.hasText(search) ? search.trim() : null;
-        return memberRepository.search(normalizedSearch, gymId, active, pageable).map(MemberResponse::from);
+        Long scopedGymId = gymId;
+        Long currentGymId = SecurityUtils.requireCurrentUser().getGymId();
+        if (currentGymId != null) {
+            scopedGymId = currentGymId;
+        }
+        return memberRepository.search(normalizedSearch, scopedGymId, active, pageable).map(MemberResponse::from);
     }
 
     @Transactional(readOnly = true)
@@ -60,16 +72,13 @@ public class MemberService {
 
     public MemberResponse update(Long id, MemberRequest request) {
         Member member = findMember(id);
-
-        if (StringUtils.hasText(request.getMemberCode()) && !request.getMemberCode().equals(member.getMemberCode())) {
-            if (memberRepository.existsByMemberCode(request.getMemberCode())) {
-                throw new DuplicateResourceException("Member code already exists: " + request.getMemberCode());
-            }
-            member.setMemberCode(request.getMemberCode().trim());
-        }
+        GmsUserDetails currentUser = SecurityUtils.requireCurrentUser();
 
         apply(member, request);
-        member.setUpdatedBy(request.getUpdatedBy());
+        if (currentUser.getGymId() != null) {
+            member.setGymId(currentUser.getGymId());
+        }
+        member.setUpdatedBy(currentUser.getId());
 
         return MemberResponse.from(memberRepository.save(member));
     }
@@ -77,14 +86,14 @@ public class MemberService {
     public MemberResponse updateActive(Long id, boolean active, Long updatedBy) {
         Member member = findMember(id);
         member.setActive(active);
-        member.setUpdatedBy(updatedBy);
+        member.setUpdatedBy(updatedBy != null ? updatedBy : SecurityUtils.requireCurrentUser().getId());
         return MemberResponse.from(memberRepository.save(member));
     }
 
     public void deactivate(Long id, Long updatedBy) {
         Member member = findMember(id);
         member.setActive(false);
-        member.setUpdatedBy(updatedBy);
+        member.setUpdatedBy(updatedBy != null ? updatedBy : SecurityUtils.requireCurrentUser().getId());
         memberRepository.save(member);
     }
 
@@ -94,7 +103,9 @@ public class MemberService {
     }
 
     private void apply(Member member, MemberRequest request) {
-        member.setGymId(request.getGymId());
+        if (request.getGymId() != null) {
+            member.setGymId(request.getGymId());
+        }
         member.setFirstName(request.getFirstName().trim());
         member.setLastName(request.getLastName().trim());
         member.setGender(request.getGender());

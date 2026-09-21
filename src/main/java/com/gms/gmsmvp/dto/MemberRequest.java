@@ -71,5 +71,4 @@ public class MemberRequest {
     private Long createdBy;
 
     private Long updatedBy;
-    // test 
 }
